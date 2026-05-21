@@ -1,5 +1,7 @@
 - type: markingsGroup
-  parent: Undergarments
+  parent:
+  - Undergarments
+  - Humanoid # starcup: added for standardized marking limits
   id: Human
   limits:
     enum.HumanoidVisualLayers.HeadTop:

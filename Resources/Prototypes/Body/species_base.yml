@@ -83,6 +83,8 @@
   - type: IdExaminable
   - type: Internals
   - type: FloatingVisuals
+  - type: Carriable # Carrying system from nyanotrasen.
+  - type: CanEscapeInventory # Carrying system from nyanotrasen.
   - type: Climbing
   - type: Cuffable
   - type: Ensnareable

@@ -4,6 +4,7 @@ using Content.Shared.Examine;
 using Content.Shared.Interaction;
 using Content.Shared.Labels.Components;
 using Content.Shared.Popups;
+using Content.Shared.Tag; // Frontier
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
 using Robust.Shared.GameStates;
@@ -19,6 +20,10 @@ public abstract class SharedHandLabelerSystem : EntitySystem
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
     [Dependency] private readonly INetManager _netManager = default!;
     [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
+    [Dependency] private readonly TagSystem _tagSystem = default!; // Frontier: prevent labelling PseudoItems
+
+    [ValidatePrototypeId<TagPrototype>] // Frontier: prevent labelling PseudoItems
+    private const string PreventTag = "PreventLabel"; // Frontier: prevent labelling PseudoItems
 
     public override void Initialize()
     {
@@ -67,6 +72,14 @@ public abstract class SharedHandLabelerSystem : EntitySystem
             return;
         }
 
+        // Frontier: prevent tagging PseudoItems
+        if (_tagSystem.HasTag(target, PreventTag))
+        {
+            RemoveLabelFrom(ent, user, target);
+            return;
+        }
+        // End Frontier
+
         if (_netManager.IsServer)
             _labelSystem.Label(target, ent.Comp.AssignedLabel);
 
@@ -91,8 +104,11 @@ public abstract class SharedHandLabelerSystem : EntitySystem
 
     private void OnUtilityVerb(Entity<HandLabelerComponent> ent, ref GetVerbsEvent<UtilityVerb> args)
     {
-        if (args.Target is not { Valid: true } target || !_whitelistSystem.CheckBoth(target, ent.Comp.Blacklist, ent.Comp.Whitelist) || !args.CanAccess)
+        if (args.Target is not { Valid: true } target || _whitelistSystem.IsWhitelistFail(ent.Comp.Whitelist, target) || !args.CanAccess)
             return;
+
+        if (_tagSystem.HasTag(target, PreventTag)) // Frontier: prevent tagging PseudoItems
+            return; // Frontier: prevent tagging PseudoItems
 
         var user = args.User;   // can't use ref parameter in lambdas
 
@@ -126,7 +142,7 @@ public abstract class SharedHandLabelerSystem : EntitySystem
 
     private void AfterInteractOn(Entity<HandLabelerComponent> ent, ref AfterInteractEvent args)
     {
-        if (args.Target is not { Valid: true } target || !_whitelistSystem.CheckBoth(target, ent.Comp.Blacklist, ent.Comp.Whitelist) || !args.CanReach)
+        if (args.Target is not { Valid: true } target || _whitelistSystem.IsWhitelistFail(ent.Comp.Whitelist, target) || !args.CanReach)
             return;
 
         AddLabelTo(ent, args.User, target);

@@ -1,0 +1,89 @@
+- type: emote
+  id: Hiss
+  name: nyan-chat-emote-name-hiss
+  category: Vocal
+  icon: _DV/Interface/Emotes/hiss.png
+  available: false
+  whitelist:
+    components:
+    - Vocal
+  blacklist:
+    components:
+    - BorgChassis
+  chatMessages: [hisses.]
+  chatTriggers:
+    - hiss
+    - hisses
+    - hissing
+    - hissed
+  # begin starcup: bringing triggers over from LizardHiss
+    - hiss
+    - hiss.
+    - hiss!
+    - hisses
+    - hisses.
+    - hisses!
+  # end starcup
+
+- type: emote
+  id: Meow
+  name: nyan-chat-emote-name-meow
+  category: Vocal
+  icon: _DV/Interface/Emotes/meow.png
+  available: false
+  whitelist:
+    components:
+    - Vocal
+  blacklist:
+    components:
+    - BorgChassis
+  chatMessages: [meows.]
+  chatTriggers:
+    - meow
+    - meows
+    - meowing
+    - meowed
+    - miau
+    - miaus
+    - nya
+    - nyas
+    - mraow
+    - mraows
+
+- type: emote
+  id: Mew
+  name: nyan-chat-emote-name-mew
+  category: Vocal
+  icon: _DV/Interface/Emotes/mew.png
+  available: false
+  whitelist:
+    components:
+    - Vocal
+  blacklist:
+    components:
+    - BorgChassis
+  chatMessages: [mews.]
+  chatTriggers:
+    - mew
+    - mews
+    - mewing
+    - mewed
+
+- type: emote
+  id: Purr
+  name: chat-emote-name-purr
+  category: Vocal
+  icon: _DV/Interface/Emotes/purr.png
+  available: false
+  whitelist:
+    components:
+    - Vocal
+  blacklist:
+    components:
+    - BorgChassis
+  chatMessages: [purrs.]
+  chatTriggers:
+    - purr
+    - purrs
+    - purring
+    - purred

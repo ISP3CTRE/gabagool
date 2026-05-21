@@ -44,6 +44,7 @@ using Robust.Shared.Utility;
 using Content.Shared.Rounding;
 using Robust.Shared.Collections;
 using Robust.Shared.Map.Enumerators;
+using Content.Shared._DV.Item.PseudoItem; // Frontier
 
 namespace Content.Shared.Storage.EntitySystems;
 
@@ -931,7 +932,10 @@ public abstract class SharedStorageSystem : EntitySystem
 
         if (entity.Comp.StoredItems.Remove(args.Entity, out var loc))
         {
-            RemoveOccupiedEntity(entity, args.Entity, loc);
+            if (TryComp<ItemComponent>(args.Entity, out var item))      /// Mriya bag escape fix
+                RemoveOccupiedEntity(entity, (args.Entity, item), loc);
+            else                                                        /// Mriya bag escape fix
+                UpdateOccupied(entity);                                 /// Mriya bag escape fix
         }
 
         Dirty(entity, entity.Comp);
@@ -1013,6 +1017,9 @@ public abstract class SharedStorageSystem : EntitySystem
 
         foreach (var entity in entities.ToArray())
         {
+            if (HasComp<PseudoItemComponent>(entity)) // Nyanotrasen - They dont transfer properly
+                continue;
+
             Insert(target, entity, out _, user: user, targetComp, playSound: false);
         }
         if (user != null

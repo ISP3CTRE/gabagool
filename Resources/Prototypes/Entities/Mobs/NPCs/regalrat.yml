@@ -303,6 +303,7 @@
   - type: GuideHelp
     guides:
     - MinorAntagonists
+  - type: FelinidFood # Mriya:  felinids port, ability to eat rat
   - type: FireVisuals
     sprite: Mobs/Effects/onfire.rsi
     normalState: Mouse_burning

@@ -1882,6 +1882,7 @@
   - type: CanEscapeInventory
   - type: MobPrice
     price: 50
+  - type: FelinidFood # Mriya:  felinids port, ability to eat mice
   - type: BadFood
   - type: NonSpreaderZombie
   - type: FireVisuals
