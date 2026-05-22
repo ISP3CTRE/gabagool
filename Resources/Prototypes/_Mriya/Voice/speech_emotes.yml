@@ -10,20 +10,12 @@
   blacklist:
     components:
     - BorgChassis
-  chatMessages: [hisses.]
+  chatMessages: [шипить.]
   chatTriggers:
-    - hiss
-    - hisses
-    - hissing
-    - hissed
-  # begin starcup: bringing triggers over from LizardHiss
-    - hiss
-    - hiss.
-    - hiss!
-    - hisses
-    - hisses.
-    - hisses!
-  # end starcup
+    - Шшшш
+    - Шипіння
+    - Шиплю
+    - Хссс
 
 - type: emote
   id: Meow
@@ -37,18 +29,14 @@
   blacklist:
     components:
     - BorgChassis
-  chatMessages: [meows.]
+  chatMessages: [нявкає.]
   chatTriggers:
-    - meow
-    - meows
-    - meowing
-    - meowed
-    - miau
-    - miaus
-    - nya
-    - nyas
-    - mraow
-    - mraows
+    - Няу
+    - Мяу
+    - Міяу
+    - Міау
+    - Мяв
+    - М'яв
 
 - type: emote
   id: Mew
@@ -62,12 +50,10 @@
   blacklist:
     components:
     - BorgChassis
-  chatMessages: [mews.]
+  chatMessages: [нявчить.]
   chatTriggers:
-    - mew
-    - mews
-    - mewing
-    - mewed
+    - Мя
+    - Ня
 
 - type: emote
   id: Purr
@@ -81,9 +67,9 @@
   blacklist:
     components:
     - BorgChassis
-  chatMessages: [purrs.]
+  chatMessages: [муркоче.]
   chatTriggers:
-    - purr
-    - purrs
-    - purring
-    - purred
+    - Мур
+    - Мурчання
+    - Муркати
+    - Мурчати

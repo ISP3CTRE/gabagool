@@ -1,7 +1,7 @@
 - type: markingsGroup
   parent:
   - Undergarments
-  - Humanoid # starcup: added for standardized marking limits
+  - MRHumanoid_base # starcup: added for standardized marking limits
   id: Felinid
   limits:
     enum.HumanoidVisualLayers.Tail:

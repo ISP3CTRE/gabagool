@@ -1,32 +1,26 @@
 <Document>
-  # Felinids
+  # Фелініди
 
   <Box>
     <GuideEntityEmbed Entity="MobFelinid" Caption=""/>
   </Box>
 
-  Small and mischievous cat-eared people. Being small in itself has lots of upsides and downsides. They can hide inside duffelbags.
+  Маленькі та бешкетливі люди з котячими вушками. Сама по собі мініатюрність має безліч плюсів і мінусів,але поки не можуть ховатися в спортивних сумках.
 
-  ## Diet
+  ## Дієта
 
-  - Can eat raw meat.
-  - Will get poisoned by Theobromine (Chocolate, Tea, Coffee) and Allicin (Onion, Garlic).
+  - Можуть їсти сире м'ясо.
+  - Отруїться теоброміном (шоколад, чай, кава) та аліцином (цибуля, часник).
 
-  ## Benefits
+  ## Переваги
 
-  - They are smaller than Humans, making them harder to hit.
-  - Can fit in duffelbags.
-  - Have the ability to throw up an hairball to get rid of some of the chemicals from their bloodstream.
-  - Able to eat mice and rats after picking them up. This has the benefit of regenerating the hairball ability and feeding them.
-  - Uses their claws to do Slashing damage and Piercing damage.
-  - Can walk completely silently, but only while barefooted.
-  - Immunity to the OwOnavirus disease.
+  - Вони менші за людей, тому в них важче влучити.
+  - Використовує свої кігті, щоб завдавати порізних та проникаючих ушкоджень.
 
-  ## Drawbacks
+  ## Недоліки
 
-  - Takes 15% more Blunt, Slash and Piercing damage.
-  - Are easily shoved, pushed and carried around by every other morphotypes due to their small size.
-  - They are weaker and struggle to carry and pull things due to their small size. They are unable to carry an Oni.
-  - They have slightly less stamina than Humans.
+  - Отримують на 15% більше пошкоджень від Дробильної, Ріжучої та Колючої шкоди.
+  - Вони слабкіші і через свої невеликі розміри їм важко нести та тягнути речі.
+  - Трохи менше витриваліші за людей.
 
 </Document>
