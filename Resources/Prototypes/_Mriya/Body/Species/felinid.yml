@@ -118,7 +118,7 @@
   - type: Speech
     speechSounds: FelinidSpeechSounds # starcup
     speechVerb: Felinid
-    allowedEmotes: ['Meow', 'Hiss', 'Mew', 'Purr', 'Growl', 'Trill'] # starcup: added Trill
+    allowedEmotes: ['Meow', 'Hiss', 'Mew', 'Purr', 'Growl',] # starcup: added Trill
   - type: DamageOnHighSpeedImpact # Landing on all fours!
     damage:
       types:

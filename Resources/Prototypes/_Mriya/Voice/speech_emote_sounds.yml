@@ -36,10 +36,6 @@
       collection: FelinidGrowls
     Purr:
       collection: FelinidPurrs
-    # begin starcup
-    Trill:
-      collection: CatTrills
-    # end starcup
     Gasp:
       collection: MaleGasp
     DefaultDeathgasp:
