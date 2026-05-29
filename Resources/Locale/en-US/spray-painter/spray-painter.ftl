@@ -1,38 +1,38 @@
 # Components
-spray-painter-ammo-on-examine = It holds {$charges} charges.
-spray-painter-ammo-after-interact-full = The spray painter is full!
-spray-painter-ammo-after-interact-refilled = You refill the spray painter.
+spray-painter-ammo-on-examine = Містить {$charges} заряди.
+spray-painter-ammo-after-interact-full = Фарбувальник повний!
+spray-painter-ammo-after-interact-refilled = Ви заправляєте фарбувальник.
 
-spray-painter-interact-no-charges = Not enough paint left.
-spray-painter-interact-nothing-to-remove = Nothing to remove!
-spray-painter-interact-no-color-pick = Can't find a color to pick!
-spray-painter-interact-color-picked = Picked color from '{$id}'.
+spray-painter-interact-no-charges = Не достатньо фарби.
+spray-painter-interact-nothing-to-remove = Нічого видаляти!
+spray-painter-interact-no-color-pick = Не вдалося знайти колір для вибору!
+spray-painter-interact-color-picked = Вибрано колір із '{$id}'.
 
-spray-painter-on-examined-painted-message = It seems to have been freshly painted.
-spray-painter-style-not-available = Cannot apply the selected style to this object.
+spray-painter-on-examined-painted-message = Здається, це нещодавно пофарбували.
+spray-painter-style-not-available = Неможливо застосувати вибраний стиль до цього об’єкта.
 
-spray-painter-verb-toggle-decals = Toggle decal painting
+spray-painter-verb-toggle-decals = Перемкнути розміщення декалей
 
-spray-painter-item-status-label = Decals: {$mode}
-spray-painter-item-status-add = [color=green]Add[/color]
-spray-painter-item-status-remove = [color=red]Remove[/color]
-spray-painter-item-status-off = [color=gray]Off[/color]
+spray-painter-item-status-label = Декалі: {$mode}
+spray-painter-item-status-add = [color=green]Додати[/color]
+spray-painter-item-status-remove = [color=red]Видалити[/color]
+spray-painter-item-status-off = [color=gray]Вимкнути[/color]
 
 # UI
-spray-painter-window-title = Spray Painter
+spray-painter-window-title = Фарбувальник
 
-spray-painter-selected-style = Selected style:
+spray-painter-selected-style = Обраний стиль:
 
-spray-painter-selected-decals = Selected decal:
-spray-painter-use-custom-color = Use custom color
-spray-painter-use-snap-to-tile = Snap to tile
+spray-painter-selected-decals = Обрана декаль:
+spray-painter-use-custom-color = Використати власний колір
+spray-painter-use-snap-to-tile = Прив'язати до плитки
 
-spray-painter-angle-rotation = Rotation:
+spray-painter-angle-rotation = Обертання:
 spray-painter-angle-rotation-90-sub = -90°
 spray-painter-angle-rotation-reset = 0°
 spray-painter-angle-rotation-90-add = +90°
 
-spray-painter-selected-color = Selected color:
+spray-painter-selected-color = Обраний колір:
 spray-painter-color-red = red
 spray-painter-color-yellow = yellow
 spray-painter-color-brown = brown
