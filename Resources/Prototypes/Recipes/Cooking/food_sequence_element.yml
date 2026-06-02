@@ -1566,6 +1566,15 @@
   - sprite: Objects/Fun/toy_ian.rsi
     state: icon
 
+#Mriya: Dragon Plushie
+- type: foodSequenceElement
+  id: DragonPlushie
+  scale: 0.6, 0.6
+  name: food-sequence-cotton-burger-content-plushie-dragon
+  sprites:
+  - sprite: _Mriya/Objects/Fun/Plushies/dragon.rsi
+    state: icon
+
 #Among pequeño - does not work with randomized sprites
 
 #- type: foodSequenceElement
