@@ -208,7 +208,7 @@
       weight: 0.005
     - id: SichPlushieMoffRanch
       weight: 0.005
-    - id: PlushieDragon # Mriya: added dragon plushie
+    - id: MRplushieDragon # Mriya: added dragon plushie
 
 - type: entityTable
   id: LotteryUsefulEntityTable
