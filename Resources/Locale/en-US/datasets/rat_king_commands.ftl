@@ -11,4 +11,4 @@ rat-king-command-cheese-3 = Вбити!
 rat-king-command-cheese-4 = Натерти їх!
 
 rat-king-command-loose-1 = Вільно!
-rat-king-command-loose-2 = Пусти!
+rat-king-command-loose-2 = Розбіглись!

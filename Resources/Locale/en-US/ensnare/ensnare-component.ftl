@@ -4,4 +4,4 @@ ensnare-component-try-free-fail = Вам не вдалося звільнити�
 
 ensnare-component-try-free-complete-other = Ви успішно звільнили {$user} від {$ensnare}!
 ensnare-component-try-free-fail-other = Вам не вдалося звільнити {$user} від {$ensnare}!
-ensnare-component-try-free-other = Ви почади знімати {$ensnare}, що сплутує {$user}!
+ensnare-component-try-free-other = Ви почали знімати {$ensnare}, що сплутує {$user}!

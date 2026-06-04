@@ -55,7 +55,7 @@ spray-painter-tab-group-airlockstandard = Звичайні
 spray-painter-tab-group-airlockglass = Скляні
 
 spray-painter-tab-group-cratesteel = Сталеві
-spray-painter-tab-group-crateplastic = Пласталеві
+spray-painter-tab-group-crateplastic = Пластикові
 spray-painter-tab-group-cratesecure = Захищені
 
 spray-painter-tab-group-closet = Звичайні
