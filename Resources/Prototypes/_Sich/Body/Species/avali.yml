@@ -150,10 +150,7 @@
         layer:
         - MobLayer
   - type: Vocal
-    sounds:
-      Male: MaleAvali
-      Female: FemaleAvali
-      Unsexed: MaleAvali
+    emoteSounds: MaleAvali      
   - type: Damageable
     damageModifierSet: Avali # PLACEHOLDER for now :3
   - type: DamageVisuals

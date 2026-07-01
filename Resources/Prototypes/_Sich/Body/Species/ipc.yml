@@ -201,10 +201,7 @@
   - type: TypingIndicator
     proto: robot
   - type: Vocal
-    sounds:
-      Male: MaleIPC
-      Female: FemaleIPC
-      Unsexed: UnisexIPC
+    emoteSounds: MaleIPC
     wilhelm:
       path: /Audio/_Sich/Voice/IPC/wilhelm.ogg
   - type: Damageable
