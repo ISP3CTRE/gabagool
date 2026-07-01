@@ -1134,6 +1134,10 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasColumnType("REAL")
                         .HasColumnName("width");
 
+                    b.Property<string>("Voice")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("voice");
+
                     b.HasKey("Id")
                         .HasName("PK_profile");
 

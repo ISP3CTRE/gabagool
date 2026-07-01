@@ -1,7 +1,7 @@
 - type: entity
   name: космічний короп
   id: BaseMobCarp
-  parent: [ SimpleSpaceMobBase, FlyingMobBase, MobCombat, BaseSlicingRefinable ]
+  parent: [ SimpleSpaceMobBase, FlyingMobBase, MobCombat, BaseSlicingRefinable, MobNightVision ]
   description: Це космічний короп. *кусь*
   abstract: true
   components:
