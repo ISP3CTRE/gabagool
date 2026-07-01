@@ -4,7 +4,7 @@
   roundStart: true
   prototype: MobDwarf
   dollPrototype: AppearanceDwarf
-  skinColoration: HumanTone
+  skinColoration: HumanToned
   minHeight: 0.65
   defaultHeight: 0.7
   maxHeight: 0.75
