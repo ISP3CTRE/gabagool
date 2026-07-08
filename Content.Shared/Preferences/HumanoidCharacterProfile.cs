@@ -779,6 +779,7 @@ namespace Content.Shared.Preferences
             return profile;
         }
 
+        // Mriya Start
         public HumanoidCharacterProfile WithLoadouts(Dictionary<string, RoleLoadout> loadouts)
         {
             var profile = Clone();
@@ -792,6 +793,7 @@ namespace Content.Shared.Preferences
             profile._loadouts = copied;
             return profile;
         }
+        // Mriya End
 
         public RoleLoadout GetLoadoutOrDefault(string id, ICommonSession? session, ProtoId<SpeciesPrototype>? species, IEntityManager entManager, IPrototypeManager protoManager)
         {

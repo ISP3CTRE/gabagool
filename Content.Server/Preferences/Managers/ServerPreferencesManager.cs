@@ -422,7 +422,7 @@ namespace Content.Server.Preferences.Managers
             DebugTools.Assert(prefsData.Prefs != null);
             prefsData.Prefs = SanitizePreferences(session, prefsData.Prefs, _dependencies);
 
-            prefsData.Prefs = SanitizeSponsorPreferences(session, prefsData.Prefs);
+            prefsData.Prefs = SanitizeSponsorPreferences(session, prefsData.Prefs); // mriya
 
             prefsData.PrefsLoaded = true;
 

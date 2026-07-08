@@ -54,7 +54,7 @@ internal sealed partial class ChatManager : IChatManager
 
     private ISawmill _sawmill = default!;
 
-    [Dependency] private readonly ISponsorManager _sichSponsorManager = default!;
+    [Dependency] private ISponsorManager _mriyaSponsorManager = default!; // mriya
 
     /// <summary>
     /// The maximum length a player-sent message can be sent
@@ -293,9 +293,9 @@ internal sealed partial class ChatManager : IChatManager
         Color? colorOverride = null;
         var wrappedMessage = Loc.GetString("chat-manager-send-ooc-wrap-message", ("playerName",player.Name), ("message", FormattedMessage.EscapeText(message)));
 
-        if(_sichSponsorManager.TryGetCachedSponsor(player.UserId, out var sponsor))
+        if(_mriyaSponsorManager.TryGetCachedSponsor(player.UserId, out var sponsor)) // mriya
         {
-            var oocColor = _sichSponsorManager.GetOocColor(player.UserId);
+            var oocColor = _mriyaSponsorManager.GetOocColor(player.UserId);
             if (oocColor != null)
             {
                 colorOverride = Color.FromHex(oocColor);
