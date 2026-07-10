@@ -17,7 +17,7 @@ public interface ISponsorManager
 
     bool TryGetCachedSponsor(NetUserId userId, [NotNullWhen(true)] out MriyaSponsor? playerPreferences);
     MriyaSponsor GetSponsor(NetUserId userId);
-    MriyaSponsor? GetSichSponsorOrNull(NetUserId? userId);
+    MriyaSponsor? GetMriyaSponsorOrNull(NetUserId? userId);
 
     /// <summary>
     /// Перевіряє, чи має гравець в своїх активних рангах вказаний тег.

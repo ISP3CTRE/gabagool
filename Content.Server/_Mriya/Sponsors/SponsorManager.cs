@@ -154,7 +154,7 @@ public sealed class SponsorManager : ISponsorManager, IPostInjectInit
         return spons;
     }
 
-    public MriyaSponsor? GetSichSponsorOrNull(NetUserId? userId)
+    public MriyaSponsor? GetMriyaSponsorOrNull(NetUserId? userId)
     {
         if (userId == null)
             return null;
