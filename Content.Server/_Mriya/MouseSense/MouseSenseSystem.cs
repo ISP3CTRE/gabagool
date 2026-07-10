@@ -20,7 +20,7 @@ public sealed class MouseSenseSystem : SharedMouseSenseSystem
         comp.EndTime = Timing.CurTime + comp.Duration;
         Dirty(uid, comp);
 
-        _popup.PopupEntity("Ти намагаєшся відчути присутність мишей...", uid, uid);
+        _popup.PopupEntity(Loc.GetString("mouse-sense-popup"), uid, uid);
         args.Handled = true;
     }
 

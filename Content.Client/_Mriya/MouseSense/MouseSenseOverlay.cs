@@ -16,8 +16,8 @@ public sealed class MouseSenseOverlay : Overlay
     private readonly IPlayerManager _player;
     private readonly EntityLookupSystem _lookup;
     private readonly TagSystem _tag;
+    private readonly IResourceCache _resCache;
     private readonly SharedTransformSystem _xform;
-    private readonly Texture _markerTexture;
 
     private const float MarkerSize = 1.0f;
 
@@ -34,10 +34,9 @@ public sealed class MouseSenseOverlay : Overlay
         _player = player;
         _lookup = lookup;
         _tag = tag;
+        _resCache = resCache;
         _xform = _entMan.System<SharedTransformSystem>();
         ZIndex = 100;
-
-        _markerTexture = resCache.GetResource<TextureResource>("/Textures/_Mriya/Interface/mouse_marker.png").Texture;
     }
 
     protected override bool BeforeDraw(in OverlayDrawArgs args)
@@ -46,34 +45,36 @@ public sealed class MouseSenseOverlay : Overlay
         return player != null && _entMan.HasComponent<MouseSenseComponent>(player.Value);
     }
 
-   	protected override void Draw(in OverlayDrawArgs args)
-	{
-    	var player = _player.LocalEntity!.Value;
-    	var comp = _entMan.GetComponent<MouseSenseComponent>(player);
-    	var playerXform = _entMan.GetComponent<TransformComponent>(player);
-    	var mapPos = _xform.GetMapCoordinates(playerXform);
+    protected override void Draw(in OverlayDrawArgs args)
+    {
+        var player = _player.LocalEntity!.Value;
+        var comp = _entMan.GetComponent<MouseSenseComponent>(player);
 
-    	var handle = args.WorldHandle;
-    	var entities = _lookup.GetEntitiesInRange(mapPos, comp.Range);
+        var markerTexture = _resCache.GetResource<TextureResource>(comp.MarkerTexturePath).Texture;
 
-    	var eyeRotation = args.Viewport.Eye?.Rotation ?? default;
+        var playerXform = _entMan.GetComponent<TransformComponent>(player);
+        var mapPos = _xform.GetMapCoordinates(playerXform);
 
-    	foreach (var ent in entities)
-    	{
-        	if (!_tag.HasTag(ent, "MRMouseDetectable"))
-            	continue;
+        var handle = args.WorldHandle;
+        var entities = _lookup.GetEntitiesInRange(mapPos, comp.Range);
+        var eyeRotation = args.Viewport.Eye?.Rotation ?? default;
 
-        	var mouseXform = _entMan.GetComponent<TransformComponent>(ent);
-        	var worldPos = _xform.GetWorldPosition(mouseXform);
+        foreach (var ent in entities)
+        {
+            if (!_tag.HasTag(ent, "MRMouseDetectable"))
+                continue;
 
-        	var half = MarkerSize / 2f;
-        	var box = new Box2(
-            	worldPos.X - half, worldPos.Y - half,
-            	worldPos.X + half, worldPos.Y + half);
+            var mouseXform = _entMan.GetComponent<TransformComponent>(ent);
+            var worldPos = _xform.GetWorldPosition(mouseXform);
 
-        	var rotatedBox = new Box2Rotated(box, -eyeRotation, worldPos);
+            var half = MarkerSize / 2f;
+            var box = new Box2(
+                worldPos.X - half, worldPos.Y - half,
+                worldPos.X + half, worldPos.Y + half);
 
-        	handle.DrawTextureRect(_markerTexture, rotatedBox);
-    	}
-	}
+            var rotatedBox = new Box2Rotated(box, -eyeRotation, worldPos);
+
+            handle.DrawTextureRect(markerTexture, rotatedBox);
+        }
+    }
 }
