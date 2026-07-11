@@ -2031,6 +2031,7 @@
     - ChefPilot
     - Mouse
     - Meat
+    - MRMouseDetectable # Mriya: маркер для здібності на чуття мишей
   - type: Respirator
     damage:
       types:
@@ -3829,7 +3830,7 @@
   - type: HTN
     rootTask:
       task: RuminantCompound
-      
+
 - type: entity
   name: діона-німфа
   parent: [BaseMobAnimal, SimpleMobBase, StripableInventoryBase, BaseSlicingRefinable]
