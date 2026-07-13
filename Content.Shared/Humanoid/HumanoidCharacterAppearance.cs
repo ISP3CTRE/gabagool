@@ -166,13 +166,16 @@ public sealed partial class HumanoidCharacterAppearance : IEquatable<HumanoidCha
     /// <returns>A new character appearance with selected values randomized</returns>
     public static HumanoidCharacterAppearance Random(RandomizeCfg charEditorRandomizeConfig, HumanoidCharacterAppearance baseAppearance, ProtoId<SpeciesPrototype> species, Sex sex)
     {
+        var random = IoCManager.Resolve<IRobustRandom>();
+        var protoMan = IoCManager.Resolve<IPrototypeManager>();
+
         var appearance = new HumanoidCharacterAppearance { Markings = new () };
         appearance.EyeColor = (charEditorRandomizeConfig & RandomizeCfg.Eyes) != 0 ? RandomEyes() : baseAppearance.EyeColor;
         appearance.SkinColor = (charEditorRandomizeConfig & RandomizeCfg.Skin) != 0 ? RandomSkin(species) : baseAppearance.SkinColor;
 
         //height width 
-        var height = random.NextFloat(protoMan.Index<SpeciesPrototype>(species).MinHeight, protoMan.Index<SpeciesPrototype>(species).MaxHeight);
-        var width = random.NextFloat(protoMan.Index<SpeciesPrototype>(species).MinWidth, protoMan.Index<SpeciesPrototype>(species).MaxWidth);
+        appearance.Height = random.NextFloat(protoMan.Index(species).MinHeight, protoMan.Index(species).MaxHeight);
+        appearance.Width = random.NextFloat(protoMan.Index(species).MinWidth, protoMan.Index(species).MaxWidth);
         //height width
 
         // Safety step. Most systems which called Random() also called this, and not doing so caused issues with markings.
