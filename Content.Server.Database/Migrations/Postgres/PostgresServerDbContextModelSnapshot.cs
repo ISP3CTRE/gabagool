@@ -849,6 +849,72 @@ namespace Content.Server.Database.Migrations.Postgres
                         });
                 });
 
+            modelBuilder.Entity("Content.Server.Database.CustomVoteLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("custom_vote_log_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid?>("InitiatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("initiator_id");
+
+                    b.Property<int>("RoundId")
+                        .HasColumnType("integer")
+                        .HasColumnName("round_id");
+
+                    b.Property<byte>("State")
+                        .HasColumnType("smallint")
+                        .HasColumnName("state");
+
+                    b.Property<DateTime>("TimeCreated")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("time_created");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.HasKey("Id")
+                        .HasName("PK_custom_vote_log");
+
+                    b.HasIndex("InitiatorId");
+
+                    b.HasIndex("RoundId")
+                        .HasDatabaseName("IX_custom_vote_log_round_id");
+
+                    b.ToTable("custom_vote_log", (string)null);
+                });
+
+            modelBuilder.Entity("Content.Server.Database.CustomVoteLogOption", b =>
+                {
+                    b.Property<int>("VoteId")
+                        .HasColumnType("integer")
+                        .HasColumnName("vote_id");
+
+                    b.Property<short>("OptionIdx")
+                        .HasColumnType("smallint")
+                        .HasColumnName("option_idx");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("text");
+
+                    b.Property<int>("VoteCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("vote_count");
+
+                    b.HasKey("VoteId", "OptionIdx")
+                        .HasName("PK_custom_vote_log_option");
+
+                    b.ToTable("custom_vote_log_option", (string)null);
+                });
+
             modelBuilder.Entity("Content.Server.Database.IPIntelCache", b =>
                 {
                     b.Property<int>("Id")
@@ -912,6 +978,41 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasFilter("priority = 3");
 
                     b.ToTable("job", (string)null);
+                });
+
+            modelBuilder.Entity("Content.Server.Database.MriyaSponsor", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<string>("SelectedGhostColor")
+                        .HasColumnType("text")
+                        .HasColumnName("selected_ghost_color");
+
+                    b.Property<int?>("SelectedGhostRankId")
+                        .HasColumnType("integer")
+                        .HasColumnName("selected_ghost_rank_id");
+
+                    b.Property<string>("SelectedOocColor")
+                        .HasColumnType("text")
+                        .HasColumnName("selected_ooc_color");
+
+                    b.Property<int?>("SelectedOocRankId")
+                        .HasColumnType("integer")
+                        .HasColumnName("selected_ooc_rank_id");
+
+                    b.HasKey("UserId")
+                        .HasName("PK_mriya_sponsors");
+
+                    b.HasIndex("SelectedGhostRankId")
+                        .HasDatabaseName("IX_mriya_sponsors_selected_ghost_rank_id");
+
+                    b.HasIndex("SelectedOocRankId")
+                        .HasDatabaseName("IX_mriya_sponsors_selected_ooc_rank_id");
+
+                    b.ToTable("mriya_sponsors", (string)null);
                 });
 
             modelBuilder.Entity("Content.Server.Database.PlayTime", b =>
@@ -1128,6 +1229,10 @@ namespace Content.Server.Database.Migrations.Postgres
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("species");
+
+                    b.Property<string>("Voice")
+                        .HasColumnType("text")
+                        .HasColumnName("voice");
 
                     b.Property<float>("Width")
                         .HasColumnType("real")
@@ -1366,41 +1471,6 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasDatabaseName("IX_server_ban_hit_connection_id");
 
                     b.ToTable("server_ban_hit", (string)null);
-                });
-
-            modelBuilder.Entity("Content.Server.Database.SichSponsor", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.Property<string>("SelectedGhostColor")
-                        .HasColumnType("text")
-                        .HasColumnName("selected_ghost_color");
-
-                    b.Property<int?>("SelectedGhostRankId")
-                        .HasColumnType("integer")
-                        .HasColumnName("selected_ghost_rank_id");
-
-                    b.Property<string>("SelectedOocColor")
-                        .HasColumnType("text")
-                        .HasColumnName("selected_ooc_color");
-
-                    b.Property<int?>("SelectedOocRankId")
-                        .HasColumnType("integer")
-                        .HasColumnName("selected_ooc_rank_id");
-
-                    b.HasKey("UserId")
-                        .HasName("PK_sich_sponsors");
-
-                    b.HasIndex("SelectedGhostRankId")
-                        .HasDatabaseName("IX_sich_sponsors_selected_ghost_rank_id");
-
-                    b.HasIndex("SelectedOocRankId")
-                        .HasDatabaseName("IX_sich_sponsors_selected_ooc_rank_id");
-
-                    b.ToTable("sich_sponsors", (string)null);
                 });
 
             modelBuilder.Entity("Content.Server.Database.SponsorRank", b =>
@@ -1969,6 +2039,39 @@ namespace Content.Server.Database.Migrations.Postgres
                     b.Navigation("Server");
                 });
 
+            modelBuilder.Entity("Content.Server.Database.CustomVoteLog", b =>
+                {
+                    b.HasOne("Content.Server.Database.Player", "Initiator")
+                        .WithMany()
+                        .HasForeignKey("InitiatorId")
+                        .HasPrincipalKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("FK_custom_vote_log_player_initiator_id1");
+
+                    b.HasOne("Content.Server.Database.Round", "Round")
+                        .WithMany("CustomVoteLogs")
+                        .HasForeignKey("RoundId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_custom_vote_log_round_round_id");
+
+                    b.Navigation("Initiator");
+
+                    b.Navigation("Round");
+                });
+
+            modelBuilder.Entity("Content.Server.Database.CustomVoteLogOption", b =>
+                {
+                    b.HasOne("Content.Server.Database.CustomVoteLog", "Vote")
+                        .WithMany("Options")
+                        .HasForeignKey("VoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_custom_vote_log_option_custom_vote_log_vote_id");
+
+                    b.Navigation("Vote");
+                });
+
             modelBuilder.Entity("Content.Server.Database.Job", b =>
                 {
                     b.HasOne("Content.Server.Database.Profile", "Profile")
@@ -1979,6 +2082,25 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasConstraintName("FK_job_profile_profile_id");
 
                     b.Navigation("Profile");
+                });
+
+            modelBuilder.Entity("Content.Server.Database.MriyaSponsor", b =>
+                {
+                    b.HasOne("Content.Server.Database.SponsorRank", "SelectedGhostRank")
+                        .WithMany()
+                        .HasForeignKey("SelectedGhostRankId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("FK_mriya_sponsors_sponsor_ranks_selected_ghost_rank_id");
+
+                    b.HasOne("Content.Server.Database.SponsorRank", "SelectedOocRank")
+                        .WithMany()
+                        .HasForeignKey("SelectedOocRankId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("FK_mriya_sponsors_sponsor_ranks_selected_ooc_rank_id");
+
+                    b.Navigation("SelectedGhostRank");
+
+                    b.Navigation("SelectedOocRank");
                 });
 
             modelBuilder.Entity("Content.Server.Database.Player", b =>
@@ -2118,25 +2240,6 @@ namespace Content.Server.Database.Migrations.Postgres
                     b.Navigation("Connection");
                 });
 
-            modelBuilder.Entity("Content.Server.Database.SichSponsor", b =>
-                {
-                    b.HasOne("Content.Server.Database.SponsorRank", "SelectedGhostRank")
-                        .WithMany()
-                        .HasForeignKey("SelectedGhostRankId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("FK_sich_sponsors_sponsor_ranks_selected_ghost_rank_id");
-
-                    b.HasOne("Content.Server.Database.SponsorRank", "SelectedOocRank")
-                        .WithMany()
-                        .HasForeignKey("SelectedOocRankId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("FK_sich_sponsors_sponsor_ranks_selected_ooc_rank_id");
-
-                    b.Navigation("SelectedGhostRank");
-
-                    b.Navigation("SelectedOocRank");
-                });
-
             modelBuilder.Entity("Content.Server.Database.SponsorRoleAssignment", b =>
                 {
                     b.HasOne("Content.Server.Database.SponsorRank", "Rank")
@@ -2146,12 +2249,12 @@ namespace Content.Server.Database.Migrations.Postgres
                         .IsRequired()
                         .HasConstraintName("FK_sponsor_role_assignments_sponsor_ranks_rank_id");
 
-                    b.HasOne("Content.Server.Database.SichSponsor", "Sponsor")
+                    b.HasOne("Content.Server.Database.MriyaSponsor", "Sponsor")
                         .WithMany("RoleAssignments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_sponsor_role_assignments_sich_sponsors_sponsor_user_id");
+                        .HasConstraintName("FK_sponsor_role_assignments_mriya_sponsors_sponsor_user_id");
 
                     b.Navigation("Rank");
 
@@ -2238,6 +2341,16 @@ namespace Content.Server.Database.Migrations.Postgres
                     b.Navigation("BanHits");
                 });
 
+            modelBuilder.Entity("Content.Server.Database.CustomVoteLog", b =>
+                {
+                    b.Navigation("Options");
+                });
+
+            modelBuilder.Entity("Content.Server.Database.MriyaSponsor", b =>
+                {
+                    b.Navigation("RoleAssignments");
+                });
+
             modelBuilder.Entity("Content.Server.Database.Player", b =>
                 {
                     b.Navigation("AdminLogs");
@@ -2302,6 +2415,8 @@ namespace Content.Server.Database.Migrations.Postgres
             modelBuilder.Entity("Content.Server.Database.Round", b =>
                 {
                     b.Navigation("AdminLogs");
+
+                    b.Navigation("CustomVoteLogs");
                 });
 
             modelBuilder.Entity("Content.Server.Database.Server", b =>
@@ -2309,11 +2424,6 @@ namespace Content.Server.Database.Migrations.Postgres
                     b.Navigation("ConnectionLogs");
 
                     b.Navigation("Rounds");
-                });
-
-            modelBuilder.Entity("Content.Server.Database.SichSponsor", b =>
-                {
-                    b.Navigation("RoleAssignments");
                 });
 
             modelBuilder.Entity("Content.Server.Database.SponsorRank", b =>

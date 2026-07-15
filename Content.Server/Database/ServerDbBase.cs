@@ -8,7 +8,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Content.Server.Administration.Logs;
-using Content.Server.Sich.Sponsors;
+using Content.Server.Mriya.Sponsors;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Construction.Prototypes;
 using Content.Shared.Database;
@@ -23,7 +23,7 @@ using Robust.Shared.Utility;
 
 namespace Content.Server.Database
 {
-    public abstract class ServerDbBase
+    public abstract partial class ServerDbBase
     {
         private readonly ISawmill _opsLog;
         public event Action<DatabaseNotification>? OnNotificationReceived;
@@ -34,164 +34,6 @@ namespace Content.Server.Database
         {
             _serialization = serialization;
             _opsLog = opsLog;
-        }
-
-        public async Task<((SichSponsor sponsor, string? lastUserName)[] sponsors, SponsorRank[] ranks)>
-     GetAllSichSponsorsAsync(CancellationToken cancel)
-        {
-            await using var db = await GetDb(cancel);
-
-            var preferences = await db.DbContext.SichSponsors
-                .Include(p => p.RoleAssignments)
-                    .ThenInclude(ra => ra.Rank)
-                .Include(p => p.SelectedGhostRank)
-                .Include(p => p.SelectedOocRank)
-                .AsSplitQuery()
-                .ToArrayAsync(cancel);
-
-            var userIds = preferences.Select(p => p.UserId).Distinct().ToList();
-
-            var userNames = await db.DbContext.Player
-                .Where(p => userIds.Contains(p.UserId))
-                .Select(p => new { p.UserId, p.LastSeenUserName })
-                .ToArrayAsync(cancel);
-
-            var nameDict = userNames.ToDictionary(x => x.UserId, x => x.LastSeenUserName);
-
-            var preferenceTuples = preferences
-                .Select(p => (p, nameDict.TryGetValue(p.UserId, out var name) ? name : null))
-                .ToArray();
-
-            // Отримуємо всі ранги разом із їхніми тегами
-            var sponsorRanks = await db.DbContext.SponsorRanks
-                .Include(r => r.Tags)
-                .AsSplitQuery()
-                .ToArrayAsync(cancel);
-
-            return (preferenceTuples, sponsorRanks);
-        }
-
-        public async Task<SponsorRank?> GetSponsorRankDataForAsync(int id, CancellationToken cancel = default)
-        {
-            await using var db = await GetDb(cancel);
-
-            return await db.DbContext.SponsorRanks
-                .Include(r => r.Tags) // Обов'язково підтягуємо теги
-                .SingleOrDefaultAsync(r => r.Id == id, cancel);
-        }
-
-        public async Task RemoveSponsorRankAsync(int rankId, CancellationToken cancel)
-        {
-            await using var db = await GetDb(cancel);
-
-            var rank = await db.DbContext.SponsorRanks.SingleAsync(a => a.Id == rankId, cancel);
-            db.DbContext.SponsorRanks.Remove(rank);
-
-            // EF Core автоматично видалить пов'язані RankTag та SponsorRoleAssignment (Cascade Delete),
-            // якщо це правильно налаштовано в міграції.
-            await db.DbContext.SaveChangesAsync(cancel);
-        }
-
-        public async Task AddSponsorRankAsync(SponsorRank rank, CancellationToken cancel)
-        {
-            await using var db = await GetDb(cancel);
-
-            db.DbContext.SponsorRanks.Add(rank);
-
-            await db.DbContext.SaveChangesAsync(cancel);
-        }
-
-        public async Task UpdateSponsorRankAsync(SponsorRank rank, CancellationToken cancel)
-        {
-            await using var db = await GetDb(cancel);
-
-            var existing = await db.DbContext.SponsorRanks
-                .Include(r => r.Tags)
-                .SingleAsync(a => a.Id == rank.Id, cancel);
-
-            // Оновлюємо базові поля
-            existing.Name = rank.Name;
-            existing.DefaultColor = rank.DefaultColor;
-            existing.CanSetGhostColor = rank.CanSetGhostColor;
-            existing.CanSetOocColor = rank.CanSetOocColor;
-
-            // --- ДОДАНО НОВІ ПОЛЯ ---
-            existing.DefaultGhostColor = rank.DefaultGhostColor;
-            existing.DefaultOocColor = rank.DefaultOocColor;
-            existing.ShowInSponsorWindow = rank.ShowInSponsorWindow;
-            existing.Priority = rank.Priority;
-
-            // Оновлюємо теги
-            db.DbContext.RankTags.RemoveRange(existing.Tags);
-
-            var newTags = rank.Tags.Select(t => new RankTag { SponsorRankId = existing.Id, TagValue = t.TagValue }).ToList();
-            existing.Tags = newTags;
-
-            await db.DbContext.SaveChangesAsync(cancel);
-        }
-
-        public async Task<SichSponsor?> GetSponsorDataForAsync(NetUserId userId, CancellationToken cancel)
-        {
-            await using var db = await GetDb(cancel);
-
-            return await db.DbContext.SichSponsors
-                .Include(p => p.RoleAssignments)
-                    .ThenInclude(ra => ra.Rank)
-                        .ThenInclude(r => r.Tags)
-                // --- ПІДТЯГУЄМО ОБРАНІ РАНГИ ---
-                .Include(p => p.SelectedGhostRank)
-                .Include(p => p.SelectedOocRank)
-                .AsSplitQuery()
-                .SingleOrDefaultAsync(p => p.UserId == userId.UserId, cancel);
-        }
-
-        public async Task RemoveSponsorAsync(NetUserId userId, CancellationToken cancel)
-        {
-            await using var db = await GetDb(cancel);
-
-            var sponsor = await db.DbContext.SichSponsors.SingleAsync(a => a.UserId == userId.UserId, cancel);
-            db.DbContext.SichSponsors.Remove(sponsor);
-
-            await db.DbContext.SaveChangesAsync(cancel);
-        }
-
-        public async Task AddSponsorAsync(SichSponsor sponsor, CancellationToken cancel)
-        {
-            await using var db = await GetDb(cancel);
-
-            db.DbContext.SichSponsors.Add(sponsor);
-
-            await db.DbContext.SaveChangesAsync(cancel);
-        }
-
-        public async Task UpdateSponsorAsync(SichSponsor sponsor, CancellationToken cancel)
-        {
-            await using var db = await GetDb(cancel);
-
-            var existing = await db.DbContext.SichSponsors
-                .Include(s => s.RoleAssignments)
-                .SingleAsync(a => a.UserId == sponsor.UserId, cancel);
-
-            // Оновлюємо персональні налаштування кольорів
-            existing.SelectedGhostColor = sponsor.SelectedGhostColor;
-            existing.SelectedOocColor = sponsor.SelectedOocColor;
-
-            // --- ДОДАНО НОВІ ПОЛЯ ---
-            existing.SelectedGhostRankId = sponsor.SelectedGhostRankId;
-            existing.SelectedOocRankId = sponsor.SelectedOocRankId;
-
-            // Оновлюємо ролі
-            db.DbContext.SponsorRoleAssignments.RemoveRange(existing.RoleAssignments);
-
-            var newRoles = sponsor.RoleAssignments.Select(ra => new SponsorRoleAssignment
-            {
-                UserId = existing.UserId,
-                RankId = ra.RankId
-            }).ToList();
-
-            existing.RoleAssignments = newRoles;
-
-            await db.DbContext.SaveChangesAsync(cancel);
         }
 
         #region Preferences
@@ -373,6 +215,7 @@ namespace Content.Server.Database
             profile.Species = humanoid.Species;
             profile.Age = humanoid.Age;
             profile.Sex = humanoid.Sex.ToString();
+            profile.Voice = humanoid.Voice.ToString();
             profile.Gender = humanoid.Gender.ToString();
             profile.Height = appearance.Height;
             profile.Width = appearance.Width;
@@ -1013,7 +856,7 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
                     if (attempt >= maxRetryAttempts)
                     {
                         _opsLog.Error($"Max retry attempts reached. Failed to save {logs.Count} admin logs.");
-                        return;
+                        throw;
                     }
 
                     _opsLog.Warning($"Retrying in {retryDelay.TotalSeconds} seconds...");
@@ -1393,24 +1236,37 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
 
         public async Task<List<IAdminRemarksRecord>> GetAllAdminRemarks(Guid player)
         {
-            await using var db = await GetDb();
-            List<IAdminRemarksRecord> notes = new();
-            notes.AddRange(
-                (await (from note in db.DbContext.AdminNotes
-                        where note.PlayerUserId == player &&
-                              !note.Deleted &&
-                              (note.ExpirationTime == null || DateTime.UtcNow < note.ExpirationTime)
-                        select note)
-                    .Include(note => note.Round)
-                    .ThenInclude(r => r!.Server)
-                    .Include(note => note.CreatedBy)
-                    .Include(note => note.LastEditedBy)
-                    .Include(note => note.Player)
-                    .ToListAsync()).Select(MakeAdminNoteRecord));
-            notes.AddRange(await GetActiveWatchlistsImpl(db, player));
-            notes.AddRange(await GetMessagesImpl(db, player));
-            notes.AddRange(await GetBansAsNotesForUser(db, player));
-            return notes;
+            return await ParallelCollect<IAdminRemarksRecord>(
+                async () =>
+                {
+                    await using var db = await GetDb();
+                    return (await (from note in db.DbContext.AdminNotes
+                            where note.PlayerUserId == player &&
+                                  !note.Deleted &&
+                                  (note.ExpirationTime == null || DateTime.UtcNow < note.ExpirationTime)
+                            select note)
+                        .Include(note => note.Round)
+                        .ThenInclude(r => r!.Server)
+                        .Include(note => note.CreatedBy)
+                        .Include(note => note.LastEditedBy)
+                        .Include(note => note.Player)
+                        .ToListAsync()).Select(MakeAdminNoteRecord);
+                },
+                async () =>
+                {
+                    await using var db = await GetDb();
+                    return await GetActiveWatchlistsImpl(db, player);
+                },
+                async () =>
+                {
+                    await using var db = await GetDb();
+                    return await GetMessagesImpl(db, player);
+                },
+                async () =>
+                {
+                    await using var db = await GetDb();
+                    return await GetBansAsNotesForUser(db, player);
+                });
         }
         public async Task EditAdminNote(int id, string message, NoteSeverity severity, bool secret, Guid editedBy, DateTimeOffset editedAt, DateTimeOffset? expiryTime)
         {
@@ -1779,6 +1635,68 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
 
         #endregion
 
+        #region Custom vote logging
+
+        public async Task<int> CustomVoteLogAdd(
+            string title,
+            int roundId,
+            Guid? initiator,
+            ImmutableArray<string> options)
+        {
+            await using var db = await GetDb();
+
+            var log = new CustomVoteLog
+            {
+                Title = title,
+                RoundId = roundId,
+                InitiatorId = initiator,
+                State = CustomVoteState.Active,
+                TimeCreated = DateTime.UtcNow,
+                Options = options.Select((o, i) => new CustomVoteLogOption
+                    {
+                        Text = o,
+                        OptionIdx = (short)i,
+                        VoteCount = 0,
+                    })
+                    .ToList(),
+            };
+
+            db.DbContext.CustomVoteLog.Add(log);
+            await db.DbContext.SaveChangesAsync();
+
+            return log.Id;
+        }
+
+        public async Task CustomVoteLogFinish(int voteId, ImmutableArray<int> voteCounts)
+        {
+            await using var db = await GetDb();
+
+            var log = await db.DbContext.CustomVoteLog
+                .Include(cvl => cvl.Options)
+                .SingleAsync(v => v.Id == voteId);
+
+            log.State = CustomVoteState.Finished;
+
+            for (var i = 0; i < log.Options!.Count; i++)
+            {
+                log.Options[i].VoteCount = voteCounts[i];
+            }
+
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        public async Task CustomVoteLogCancel(int voteId)
+        {
+            await using var db = await GetDb();
+
+            var log = await db.DbContext.CustomVoteLog.SingleAsync(v => v.Id == voteId);
+            log.State = CustomVoteState.Cancelled;
+
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        #endregion
+
         public abstract Task SendNotification(DatabaseNotification notification);
 
         // SQLite returns DateTime as Kind=Unspecified, Npgsql actually knows for sure it's Kind=Utc.
@@ -1835,6 +1753,13 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
             }
 
             return [..results];
+        }
+
+        private static async Task<List<T>> ParallelCollect<T>(params IEnumerable<Func<Task<IEnumerable<T>>>> tasks)
+        {
+            var taskInstances = tasks.Select(a => a());
+            var results = await Task.WhenAll(taskInstances);
+            return results.SelectMany(x => x).ToList();
         }
     }
 }

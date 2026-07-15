@@ -29,6 +29,9 @@
       path: /Audio/Weapons/Guns/Gunshots/shotgun.ogg
     soundEmpty:
       path: /Audio/Weapons/Guns/Empty/empty.ogg
+  - type: CustomSpriteAmmoCounter
+    loadedAmmoSprite: Interface/ItemStatus/Shotgun_Shells/not_spent.png
+    spentAmmoSprite: Interface/ItemStatus/Shotgun_Shells/spent.png
   - type: BallisticAmmoProvider
     whitelist:
       tags:
@@ -43,6 +46,15 @@
         ents: []
   - type: StaticPrice
     price: 500
+  - type: EmitSoundOnPickup # Mriya: add interaction sounds start
+    sound:
+      collection: MRShotgunsPickUp
+  - type: EmitSoundOnDrop
+    sound:
+      collection: MRShotgunsDrop
+  - type: EmitSoundOnLand
+    sound:
+      collection: MRShotgunsDrop # Mriya: add interaction sounds end
 
 - type: entity
   name: Бульдог
@@ -67,6 +79,9 @@
     - Back
     - suitStorage
   - type: AmmoCounter
+  - type: CustomSpriteAmmoCounter
+    loadedAmmoSprite: Interface/ItemStatus/Shotgun_Shells/not_spent.png
+    spentAmmoSprite: Interface/ItemStatus/Shotgun_Shells/spent.png
   - type: GunRequiresWield #remove when inaccuracy on spreads is fixed
   - type: Gun
     fireRate: 2

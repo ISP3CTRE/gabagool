@@ -88,12 +88,15 @@
         layer:
         - MobLayer
   - type: Damageable
-    damageContainer: Biological
     damageModifierSet: Felinid
   - type: SlowOnDamage # Frontier
     speedModifierThresholds:
       60: 0.85  # 0.7 is base speed.
       80: 0.75  # 0.5 is base speed.
+  - type: ActionSpeedModifier # Mriya: пришвидшує карабкання на стійки, столи і т.д.
+    multipliers:
+      MRClimbing: 0.2
+  - type: FelinidMouseSense # Mriya: чуття на мишей
   - type: DamageVisuals
     damageOverlayGroups:
       Brute:
@@ -103,7 +106,7 @@
     bloodReferenceSolution:
       reagents:
       - ReagentId: Blood
-        Quantity: 300
+        Quantity: 600
   - type: MeleeWeapon
     soundHit:
       collection: Punch
@@ -135,10 +138,7 @@
   #  - 4,0,5,4
   - type: Vocal
     wilhelm: "/Audio/_Mriya/Voice/Felinid/cat_wilhelm.ogg"
-    sounds:
-      Male: MaleFelinid
-      Female: FemaleFelinid
-      Unsexed: MaleFelinid
+    emoteSounds: MaleFelinid
   # - type: ItemCougher # Frontier
   #   item: Hairball
   #   action: ActionHairball

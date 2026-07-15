@@ -26,7 +26,7 @@ using MSLogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Content.Server.Database
 {
-    public interface IServerDbManager
+    public partial interface IServerDbManager
     {
         void Init();
 
@@ -39,17 +39,6 @@ namespace Content.Server.Database
             NetUserId userId,
             HumanoidCharacterProfile defaultProfile,
             CancellationToken cancel);
-
-        Task<((SichSponsor sponsor, string? lastUserName)[] sponsors, SponsorRank[] ranks)> GetAllSichSponsorsAsync(CancellationToken cancel = default);
-        Task<SponsorRank?> GetSponsorRankAsync(int id, CancellationToken cancel = default);
-        Task RemoveSponsorRankAsync(int rankId, CancellationToken cancel = default);
-        Task AddSponsorRankAsync(SponsorRank rank, CancellationToken cancel = default);
-        Task UpdateSponsorRankAsync(SponsorRank rank, CancellationToken cancel = default);
-
-        Task<SichSponsor?> GetSponsorDataForAsync(NetUserId userId, CancellationToken cancel = default);
-        Task RemoveSponsorAsync(NetUserId userId, CancellationToken cancel = default);
-        Task AddSponsorAsync(SichSponsor sponsor, CancellationToken cancel = default);
-        Task UpdateSponsorAsync(SichSponsor sponsor, CancellationToken cancel = default);
 
         Task SaveSelectedCharacterIndexAsync(NetUserId userId, int index);
 
@@ -340,6 +329,46 @@ namespace Content.Server.Database
         Task SendNotification(DatabaseNotification notification);
 
         #endregion
+
+        #region Custom vote log
+
+        /// <summary>
+        /// Log a new custom vote to the database.
+        /// </summary>
+        /// <param name="title">The player-facing title for the custom vote.</param>
+        /// <param name="roundId">The round ID this vote was initiated.</param>
+        /// <param name="initiator">The user ID of the admin that initiated the vote.</param>
+        /// <param name="options">The player-facing contents of each vote option.</param>
+        /// <remarks>
+        /// The created vote is initially in the <see cref="CustomVoteState.Active"/> state.
+        /// </remarks>
+        /// <returns>
+        /// The ID of the database entry,
+        /// for subsequent calls to <see cref="CustomVoteLogFinish"/> or <see cref="CustomVoteLogCancel"/>.
+        /// </returns>
+        Task<int> CustomVoteLogAdd(string title, int roundId, NetUserId? initiator, ImmutableArray<string> options);
+
+        /// <summary>
+        /// Mark a logged custom vote as finished.
+        /// </summary>
+        /// <param name="voteId">
+        /// The database ID of the custom vote, as returned by <see cref="CustomVoteLogAdd"/>.
+        /// </param>
+        /// <param name="voteCounts">
+        /// The counts each option received. The indexes are matched to the options given in
+        /// <see cref="CustomVoteLogAdd"/>.
+        /// </param>
+        Task CustomVoteLogFinish(int voteId, ImmutableArray<int> voteCounts);
+
+        /// <summary>
+        /// Mark a logged custom vote as canceled.
+        /// </summary>
+        /// <param name="voteId">
+        /// The database ID of the custom vote, as returned by <see cref="CustomVoteLogAdd"/>.
+        /// </param>
+        Task CustomVoteLogCancel(int voteId);
+
+        #endregion
     }
 
     /// <summary>
@@ -436,64 +465,6 @@ namespace Content.Server.Database
             _sqliteInMemoryConnection?.Dispose();
             _db.Shutdown();
         }
-
-        #region MRSponsors
-
-        public Task<((SichSponsor sponsor, string? lastUserName)[] sponsors, SponsorRank[] ranks)>
-            GetAllSichSponsorsAsync(CancellationToken cancel)
-        {
-            DbReadOpsMetric.Inc();
-            return RunDbCommand(() => _db.GetAllSichSponsorsAsync(cancel));
-        }
-
-        public Task<SponsorRank?> GetSponsorRankAsync(int id, CancellationToken cancel = default)
-        {
-            DbReadOpsMetric.Inc();
-            return RunDbCommand(() => _db.GetSponsorRankDataForAsync(id, cancel));
-        }
-
-        public Task RemoveSponsorRankAsync(int rankId, CancellationToken cancel = default)
-        {
-            DbWriteOpsMetric.Inc();
-            return RunDbCommand(() => _db.RemoveSponsorRankAsync(rankId, cancel));
-        }
-
-        public Task AddSponsorRankAsync(SponsorRank rank, CancellationToken cancel = default)
-        {
-            DbWriteOpsMetric.Inc();
-            return RunDbCommand(() => _db.AddSponsorRankAsync(rank, cancel));
-        }
-
-        public Task UpdateSponsorRankAsync(SponsorRank rank, CancellationToken cancel = default)
-        {
-            DbWriteOpsMetric.Inc();
-            return RunDbCommand(() => _db.UpdateSponsorRankAsync(rank, cancel));
-        }
-
-        public Task<SichSponsor?> GetSponsorDataForAsync(NetUserId userId, CancellationToken cancel = default)
-        {
-            DbReadOpsMetric.Inc();
-            return RunDbCommand(() => _db.GetSponsorDataForAsync(userId, cancel));
-        }
-
-        public Task RemoveSponsorAsync(NetUserId userId, CancellationToken cancel = default)
-        {
-            DbWriteOpsMetric.Inc();
-            return RunDbCommand(() => _db.RemoveSponsorAsync(userId, cancel));
-        }
-
-        public Task AddSponsorAsync(SichSponsor sponsor, CancellationToken cancel = default)
-        {
-            DbWriteOpsMetric.Inc();
-            return RunDbCommand(() => _db.AddSponsorAsync(sponsor, cancel));
-        }
-
-        public Task UpdateSponsorAsync(SichSponsor sponsor, CancellationToken cancel = default)
-        {
-            DbWriteOpsMetric.Inc();
-            return RunDbCommand(() => _db.UpdateSponsorAsync(sponsor, cancel));
-        }
-        #endregion
 
         public Task<Preference> InitPrefsAsync(
             NetUserId userId,
@@ -1064,6 +1035,28 @@ namespace Content.Server.Database
         {
             DbWriteOpsMetric.Inc();
             return RunDbCommand(() => _db.SendNotification(notification));
+        }
+
+        public Task<int> CustomVoteLogAdd(
+            string title,
+            int roundId,
+            NetUserId? initiator,
+            ImmutableArray<string> options)
+        {
+            DbWriteOpsMetric.Inc();
+            return RunDbCommand(() => _db.CustomVoteLogAdd(title, roundId, initiator, options));
+        }
+
+        public Task CustomVoteLogFinish(int voteId, ImmutableArray<int> voteCounts)
+        {
+            DbWriteOpsMetric.Inc();
+            return RunDbCommand(() => _db.CustomVoteLogFinish(voteId, voteCounts));
+        }
+
+        public Task CustomVoteLogCancel(int voteId)
+        {
+            DbWriteOpsMetric.Inc();
+            return RunDbCommand(() => _db.CustomVoteLogCancel(voteId));
         }
 
         private async void HandleDatabaseNotification(DatabaseNotification notification)
