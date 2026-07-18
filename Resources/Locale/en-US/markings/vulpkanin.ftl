@@ -272,7 +272,6 @@ marking-VulpHairRaine = Рейн
 marking-VulpHairRaine-raine = Рейн
 
 marking-VulpHairRough = Недбале волосся
-job-description-paramedic = Парамедик
 marking-VulpHairRough-rough = Недбале волосся
 
 marking-VulpHairShort = Коротке волосся
