@@ -173,8 +173,8 @@ public sealed partial class HumanoidCharacterAppearance : IEquatable<HumanoidCha
         // TODO if someone really cares they can probably regenerate the old markings with new colors but im too tired to figure that out
 
         //height width 
-        var height = random.NextFloat(protoMan.Index(species).MinHeight, protoMan.Index(species).MaxHeight);
-        var width = random.NextFloat(protoMan.Index(species).MinWidth, protoMan.Index(species).MaxWidth);
+        var height = random.NextFloat(species.MinHeight, species.MaxHeight);
+        var width = random.NextFloat(species.MinWidth, species.MaxWidth);
         //height width
 
         HumanoidCharacterAppearance appearance = new(

@@ -710,9 +710,9 @@
     sprite: Clothing/Mask/italian_moustache.rsi
   - type: Item
     storedRotation: -90
-  - type: AddAccentClothing # Sich revert remove italian
-    accent: ReplacementAccent
-    replacement: italian
+  - type: ReplacementAccent # Mriya revert remove italian
+    accent: italian
+    relayAccent: true
 
 - type: entity
   parent: ClothingMaskBase
