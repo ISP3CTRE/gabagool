@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using Content.Server.Speech.Components;
 using Content.Shared.Speech.EntitySystems;
 
@@ -17,10 +17,10 @@ public sealed class MothAccentSystem : RelayAccentSystem<MothAccentComponent>
         // Triple upper-case "Z", "З", "Ж"
         message = RegexUpperBuzz.Replace(message, match => new string(match.Value[0], 3));
 
-        // buzzz
-        message = RegexLowerBuzz.Replace(message, "zzz");
-        // buZZZ
-        message = RegexUpperBuzz.Replace(message, "ZZZ");
+        //// buzzz
+        //message = RegexLowerBuzz.Replace(message, "zzz");
+        //// buZZZ
+        //message = RegexUpperBuzz.Replace(message, "ZZZ");
 
         return message;
     }
