@@ -12,7 +12,7 @@ public sealed partial class SpeechSoundSystem : EntitySystem
     [Dependency] private IGameTiming _gameTiming = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
 
-    [SubscribeLocalEvent]
+    //[SubscribeLocalEvent] mriya
     private void OnEntitySpoke(Entity<SpeechComponent> ent, ref EntitySpokeEvent args)
     {
         if (ent.Comp.SpeechSounds == null)

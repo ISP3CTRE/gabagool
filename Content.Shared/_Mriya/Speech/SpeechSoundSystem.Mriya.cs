@@ -1,11 +1,11 @@
 using Content.Shared.CCVar;
 using Content.Shared.Chat;
-using Content.Shared.Speech;
+using Content.Shared.Random.Helpers;
 using Robust.Shared.Audio;
 using Robust.Shared.Configuration;
 using Robust.Shared.Random;
 
-namespace Content.Server.Speech;
+namespace Content.Shared.Speech.EntitySystems;
 
 public sealed partial class SpeechSoundSystem
 {
@@ -32,62 +32,63 @@ public sealed partial class SpeechSoundSystem
         }
     }
 
+    [SubscribeLocalEvent]
     private void OnEntitySpokeHandler(Entity<SpeechComponent> ent, ref EntitySpokeEvent args)
     {
         if (_cfg.GetCVar(CCVars.MriyaSpeechBububu))
         {
-            OnEntitySpokeMriya(ent.Owner, ent.Comp, args);
+            OnEntitySpokeMriya(ent, args);
         }
         else
         {
-            OnEntitySpoke(ent.Owner, ent.Comp, args);
+            OnEntitySpoke(ent, ref args);
         }
     }
 
-    private void OnEntitySpokeMriya(EntityUid uid, SpeechComponent component, EntitySpokeEvent args)
+    private void OnEntitySpokeMriya(Entity<SpeechComponent> ent, EntitySpokeEvent args)
     {
-        if (component.SpeechSounds == null || string.IsNullOrWhiteSpace(args.Message))
+        if (ent.Comp.SpeechSounds == null || string.IsNullOrWhiteSpace(args.Message))
             return;
 
         var currentTime = _gameTiming.CurTime;
-        var cooldown = TimeSpan.FromSeconds(component.SoundCooldownTime);
+        var cooldown = TimeSpan.FromSeconds(ent.Comp.SoundCooldownTime);
 
-        if (currentTime - component.LastTimeSoundPlayed < cooldown)
+        if (currentTime - ent.Comp.LastTimeSoundPlayed < cooldown)
             return;
 
-        component.LastTimeSoundPlayed = currentTime;
-        component.PendingSpeechSounds.Clear();
+        ent.Comp.LastTimeSoundPlayed = currentTime;
+        ent.Comp.PendingSpeechSounds.Clear();
 
         var words = args.Message.Split(new[] { ' ', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var word in words)
         {
-            if (component.PendingSpeechSounds.Count >= _cfg.GetCVar(CCVars.MriyaSpeechBububuMaxWord))
+            if (ent.Comp.PendingSpeechSounds.Count >= _cfg.GetCVar(CCVars.MriyaSpeechBububuMaxWord))
                 break;
 
-            var soundData = GetSpeechSoundMriya((uid, component), word);
+            var soundData = GetSpeechSoundMriya(ent, word);
             if (soundData == null)
                 continue;
 
             var data = soundData.Value;
-
-            var randomDelay = _random.NextFloat(component.MinDelayBetweenWords, component.MaxDelayBetweenWords);
+            var random = SharedRandomExtensions.PredictedRandom(_gameTiming, GetNetEntity(ent));
+            var randomDelay = random.NextFloat(ent.Comp.MinDelayBetweenWords, ent.Comp.MaxDelayBetweenWords);
 
             char lastChar = word[^1];
             if (lastChar == '.' || lastChar == ',' || lastChar == '!' || lastChar == '?' || lastChar == ';' || lastChar == ':')
             {
                 if (lastChar == '.' || lastChar == '!' || lastChar == '?')
-                    randomDelay += component.PunctuationDelay;
+                    randomDelay += ent.Comp.PunctuationDelay;
                 else
-                    randomDelay += (component.PunctuationDelay * 0.5f);
+                    randomDelay += (ent.Comp.PunctuationDelay * 0.5f);
             }
 
             data.DelayAfter = randomDelay;
 
-            component.PendingSpeechSounds.Enqueue(data);
+            ent.Comp.PendingSpeechSounds.Enqueue(data);
         }
 
-        component.NextSpeechSoundTime = currentTime;
+        ent.Comp.NextSpeechSoundTime = currentTime;
     }
 
     public SpeechSoundData? GetSpeechSoundMriya(Entity<SpeechComponent> ent, string message)
@@ -117,7 +118,8 @@ public sealed partial class SpeechSoundSystem
             contextSound = prototype.ExclaimSound;
         }
 
-        var scale = (float)_random.NextGaussian(1, prototype.Variation);
+        var random = SharedRandomExtensions.PredictedRandom(_gameTiming, GetNetEntity(ent));
+        var scale = (float)random.NextGaussian(1, prototype.Variation);
 
         var audioParams = ent.Comp.AudioParams.WithPitchScale(scale);
 
