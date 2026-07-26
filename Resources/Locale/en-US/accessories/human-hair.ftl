@@ -610,3 +610,7 @@ marking-HumanHairTerminal = Terminal
 marking-HumanHairTerminal-terminal = Primary
 marking-HumanHairTerminal-terminal_highlight = Highlight
 marking-HumanHairTerminal-terminal_headband = Headband
+
+marking-HumanHairTopknotBox = Topknot Box
+marking-HumanHairTopknotBox-topknotbox_basehair = Primary
+marking-HumanHairTopknotBox-topknotbox_headband = Secondary
