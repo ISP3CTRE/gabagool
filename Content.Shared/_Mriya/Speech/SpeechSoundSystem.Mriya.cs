@@ -63,7 +63,7 @@ public sealed partial class SpeechSoundSystem
 
         foreach (var word in words)
         {
-            if (ent.Comp.PendingSpeechSounds.Count >= _cfg.GetCVar(CCVars.MriyaSpeechBububuMaxWord))
+            if (ent.Comp.PendingSpeechSounds.Count >= _cfg.GetCVar(CCVars.MriyaSpeechBububuMaxWord) || (ent.Comp.UseSoundLimitOverride && ent.Comp.SoundLimitOverride >= _cfg.GetCVar(CCVars.MriyaSpeechBububuMaxWord)))
                 break;
 
             var soundData = GetSpeechSoundMriya(ent, word);
