@@ -135,7 +135,7 @@
     layers: 
     - state: "icon"
       map: ["enum.ActionVisuals.Icon"]
-    - state: "icon_on"
+    - state: "icon-on"
       map: ["enum.ActionVisuals.IconToggled"]
   - type: InstantAction
     event: !type:OnRetractableItemActionEvent
